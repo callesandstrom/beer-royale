@@ -8,7 +8,11 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
+import { NgxsModule } from '@ngxs/store';
+import { environment } from 'src/environments/environment';
 import { AppComponent } from './app.component';
+import { AppState } from './app.state';
 import { CloudsComponent } from './clouds/clouds.component';
 import { GameSetupComponent } from './game-setup/game-setup.component';
 import { GameComponent } from './game/game.component';
@@ -32,6 +36,8 @@ import { HeaderComponent } from './header/header.component';
     MatInputModule,
     MatSnackBarModule,
     ReactiveFormsModule,
+    NgxsModule.forRoot([AppState], { developmentMode: !environment.production }),
+    NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
   ],
   providers: [],
   bootstrap: [AppComponent]

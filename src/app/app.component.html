@@ -3,12 +3,12 @@
   <app-header></app-header>
 
   <div class="app-container">
-    <ng-container *ngIf="showGame; else gameSetup">
-      <app-game [playerNames]="playerNames" [intervalMs]="intervalMs"></app-game>
+    <ng-container *ngIf="showMenu$ | async; else game">
+      <app-game-setup></app-game-setup>
     </ng-container>
 
-    <ng-template #gameSetup>
-      <app-game-setup (submitted)="onGameSetup($event)"></app-game-setup>
+    <ng-template #game>
+      <app-game></app-game>
     </ng-template>
   </div>
 

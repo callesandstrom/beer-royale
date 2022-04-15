@@ -1,5 +1,7 @@
 import { Component } from '@angular/core';
-import { GameSettings } from './game-setup/game-setup.component';
+import { Select } from '@ngxs/store';
+import { Observable } from 'rxjs';
+import { AppState } from './app.state';
 
 @Component({
   selector: 'app-root',
@@ -8,14 +10,5 @@ import { GameSettings } from './game-setup/game-setup.component';
 })
 
 export class AppComponent {
-
-  showGame = false;
-  playerNames: string[] = [];
-  intervalMs: number = 1000;
-
-  onGameSetup(settings: GameSettings): void {
-    this.showGame = true;
-    this.playerNames = settings.playerNames;
-    this.intervalMs = settings.intervalMs;
-  }
+  @Select(AppState.showMenu) showMenu$: Observable<boolean>;
 }

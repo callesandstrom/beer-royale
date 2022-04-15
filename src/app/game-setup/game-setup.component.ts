@@ -1,10 +1,7 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormArray, FormControl, Validators } from '@angular/forms';
-
-export interface GameSettings {
-  playerNames: string[];
-  intervalMs: number;
-}
+import { Store } from '@ngxs/store';
+import { SetGameSettings } from '../app.state';
 
 @Component({
   selector: 'app-game-setup',
@@ -29,7 +26,7 @@ export class GameSetupComponent {
     new FormControl('Oscar', Validators.required),
   ]);
 
-  @Output() submitted = new EventEmitter<GameSettings>();
+  constructor(private store: Store) { }
 
   addPlayer(): void {
     this.players.push(new FormControl(null, Validators.required));
@@ -40,10 +37,10 @@ export class GameSetupComponent {
   }
 
   submit(): void {
-    this.submitted.emit({
+    this.store.dispatch(new SetGameSettings({
       playerNames: this.players.value.map((name: string) => name + ' ' + this.getEmoji(name)),
       intervalMs: this.intervalSec.value * 1000
-    });
+    }));
   }
 
   private getEmoji(name: string): string {

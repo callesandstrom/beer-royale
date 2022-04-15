@@ -1,31 +1,33 @@
-<div class="mb-2">
-  <ng-container *ngIf="started; else startButton">
-    <ng-container *ngIf="finished; else running">
-      <button mat-raised-button color="primary" (click)="restart()">Starta om</button>
-    </ng-container>
-
-    <ng-template #running>
-      <ng-container *ngIf="pause$ | async; else pausButton">
-        <button mat-raised-button color="primary" (click)="resume()">Dansa</button>
+<ng-container *ngIf="gameState$ | async as gameState">
+  <div class="mb-2">
+    <ng-container *ngIf="gameState.started; else startButton">
+      <ng-container *ngIf="gameState.finished; else running">
+        <button mat-raised-button color="primary" (click)="restart()">Starta om</button>
       </ng-container>
 
-      <ng-template #pausButton>
-        <button mat-raised-button color="primary" (click)="pause()">Pausa</button>
-      </ng-template>
-    </ng-template>
-  </ng-container>
+      <ng-template #running>
+        <ng-container *ngIf="gameState.paused; else pauseButton">
+          <button mat-raised-button color="primary" (click)="resume()">Dansa</button>
+        </ng-container>
 
-  <ng-template #startButton>
-    <button mat-raised-button color="primary" (click)="start()">Starta</button>
-  </ng-template>
-</div>
+        <ng-template #pauseButton>
+          <button mat-raised-button color="primary" (click)="pause()">Pausa</button>
+        </ng-template>
+      </ng-template>
+    </ng-container>
+
+    <ng-template #startButton>
+      <button mat-raised-button color="primary" (click)="start()">Starta</button>
+    </ng-template>
+  </div>
+</ng-container>
 
 <div class="game-container">
   <div class="section mr-2">
     <mat-card>
       <mat-card-subtitle>Spelare</mat-card-subtitle>
       <div class="player-container">
-        <ng-container *ngFor="let player of sortedPlayers; let i = index">
+        <ng-container *ngFor="let player of leaderboard$ | async; let i = index">
           <div>{{ i + 1 }} {{ player.name }}</div>
           <div>HP: <strong>{{ player.hp }}</strong></div>
         </ng-container>
@@ -36,15 +38,21 @@
   <div class="section">
     <mat-card>
       <mat-card-subtitle>Logg</mat-card-subtitle>
-      <div *ngFor="let round of rounds.slice().reverse()" class="round">
+      <div *ngFor="let round of rounds$ | async" class="round">
         <div class="round__number">Runda {{ round.number }}</div>
         <div *ngFor="let attack of round.attacks" class="attack-container">
-          <div>{{ attack.playerName }} använde {{ attack.weapon | lowercase }} på {{ attack.enemyName }}</div>
-          <div>
-            <span *ngIf="attack.isDeathblow">💀</span>
-            <span *ngIf="attack.criticalHit">💥</span>
-            DMG: <strong>{{ attack.damage }}</strong>
-          </div>
+          <ng-container *ngIf="attack.enemyName; else noEnemy">
+            <div>{{ attack.playerName }} använde {{ attack.weapon | lowercase }} på {{ attack.enemyName }}</div>
+            <div>
+              <span *ngIf="attack.isDeathblow">💀</span>
+              <span *ngIf="attack.isCriticalHit">💥</span>
+              DMG: <strong>{{ attack.damage }}</strong>
+            </div>
+          </ng-container>
+
+          <ng-template #noEnemy>
+            <div>{{ attack.playerName }} tittade på medans resten dog 😬</div>
+          </ng-template>
         </div>
       </div>
     </mat-card>
