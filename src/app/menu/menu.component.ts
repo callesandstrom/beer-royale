@@ -1,14 +1,15 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { FormArray, FormControl, Validators } from '@angular/forms';
 import { Store } from '@ngxs/store';
 import { SetGameSettings } from '../app.state';
 
 @Component({
-  selector: 'app-game-setup',
-  templateUrl: './game-setup.component.html',
-  styleUrls: ['./game-setup.component.scss']
+  selector: 'app-menu',
+  templateUrl: './menu.component.html',
+  styleUrls: ['./menu.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GameSetupComponent {
+export class MenuComponent {
 
   emojies = ['🐢', '🐲', '🦄', '🐼', '🐷', '🐦', '🐬', '🐘', '🐒', '🐇', '🐧', '🐫', '🐠', '🐞', '🐝', '🐳', '🐶', '🐌', '🐻', '🦍'];
 

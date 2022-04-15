@@ -1,49 +1,33 @@
-<ng-container *ngIf="gameState$ | async as gameState">
-  <div class="mb-2">
-    <ng-container *ngIf="gameState.started; else startButton">
-      <ng-container *ngIf="gameState.finished; else running">
-        <button mat-raised-button color="primary" (click)="restart()">Starta om</button>
-      </ng-container>
+<div class="mb-2">
+  <app-toolbar [gameState]="gameState$ | async"></app-toolbar>
+</div>
 
-      <ng-template #running>
-        <ng-container *ngIf="gameState.paused; else pauseButton">
-          <button mat-raised-button color="primary" (click)="resume()">Dansa</button>
-        </ng-container>
-
-        <ng-template #pauseButton>
-          <button mat-raised-button color="primary" (click)="pause()">Pausa</button>
-        </ng-template>
-      </ng-template>
-    </ng-container>
-
-    <ng-template #startButton>
-      <button mat-raised-button color="primary" (click)="start()">Starta</button>
-    </ng-template>
-  </div>
-</ng-container>
-
-<div class="game-container">
+<div class="game">
   <div class="section mr-2">
-    <mat-card>
+    <mat-card class="mat-elevation-z8">
       <mat-card-subtitle>Spelare</mat-card-subtitle>
-      <div class="player-container">
+
+      <div class="leaderboard">
         <ng-container *ngFor="let player of leaderboard$ | async; let i = index">
           <div>{{ i + 1 }} {{ player.name }}</div>
           <div>HP: <strong>{{ player.hp }}</strong></div>
         </ng-container>
       </div>
+
     </mat-card>
   </div>
 
   <div class="section">
-    <mat-card>
+    <mat-card class="mat-elevation-z8">
       <mat-card-subtitle>Logg</mat-card-subtitle>
-      <div *ngFor="let round of rounds$ | async" class="round">
-        <div class="round__number">Runda {{ round.number }}</div>
-        <div *ngFor="let attack of round.attacks" class="attack-container">
+
+      <div *ngFor="let round of rounds$ | async" class="round mb-2">
+        <div class="round-number">Runda {{ round.number }}</div>
+
+        <div *ngFor="let attack of round.attacks" class="attacks">
           <ng-container *ngIf="attack.enemyName; else noEnemy">
             <div>{{ attack.playerName }} använde {{ attack.weapon | lowercase }} på {{ attack.enemyName }}</div>
-            <div>
+            <div title="HP på {{ attack.enemyName }} efter attack: {{ attack.newEnemyHp }}">
               <span *ngIf="attack.isDeathblow">💀</span>
               <span *ngIf="attack.isCriticalHit">💥</span>
               DMG: <strong>{{ attack.damage }}</strong>
@@ -55,6 +39,7 @@
           </ng-template>
         </div>
       </div>
+
     </mat-card>
   </div>
 </div>

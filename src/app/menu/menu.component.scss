@@ -1,14 +1,17 @@
 :host {
-  display: block;
+  display: flex;
+  justify-content: center;
+}
+
+mat-card {
+  padding-bottom: 0px;
   width: 540px;
-  padding: 24px 24px 0 24px;
-  background-color: whitesmoke;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 }
 
 .players-container {
-  height: 520px;
+  max-height: 420px;
   margin-bottom: 24px;
+  padding-right: 8px;
   overflow: auto;
 
   & mat-form-field {

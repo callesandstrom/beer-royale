@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { filter, interval, map, startWith, takeWhile } from 'rxjs';
+import { Attack, GameSettings, GameState, Player, Round } from './models';
 
 const weapons = ['Eldboll', 'Kokosnöt', 'Regnbågsvätska', 'Fiskben', 'Rent gift', 'Majskolv', 'Häxvrål', 'Batong', 'Späckhuggare', 'Pulver', 'Ett mapp', 'Örfil', 'Trollstav', 'Mossa', 'Smör', 'Sin röst'];
 
@@ -41,40 +42,7 @@ export interface AppStateModel {
   settings: GameSettings;
   players: Player[];
   rounds: Round[];
-  showMenu: boolean;
-  started: boolean;
-  paused: boolean;
-  finished: boolean;
-}
-
-export interface GameSettings {
-  playerNames: string[];
-  intervalMs: number;
-}
-
-export interface Player {
-  name: string;
-  hp: number;
-  diedAtRound: number | null;
-}
-
-export interface Round {
-  number: number;
-  attacks: Attack[];
-}
-
-export interface Attack {
-  playerName: string;
-  enemyName: string;
-  newEnemyHp: number;
-  weapon: string;
-  damage: number;
-  isCriticalHit: boolean;
-  isDeathblow: boolean;
-}
-
-export interface GameState {
-  showMenu: boolean;
+  menuOpened: boolean;
   started: boolean;
   paused: boolean;
   finished: boolean;
@@ -90,7 +58,7 @@ export interface GameState {
     },
     players: [],
     rounds: [],
-    showMenu: true,
+    menuOpened: true,
     started: false,
     paused: false,
     finished: false,
@@ -99,14 +67,14 @@ export interface GameState {
 export class AppState {
 
   @Selector()
-  static showMenu(state: AppStateModel) {
-    return state.showMenu;
+  static menuOpened(state: AppStateModel) {
+    return state.menuOpened;
   }
 
   @Selector()
   static gameState(state: AppStateModel): GameState {
     return {
-      showMenu: state.showMenu,
+      menuOpened: state.menuOpened,
       started: state.started,
       paused: state.paused,
       finished: state.finished,
@@ -125,7 +93,7 @@ export class AppState {
 
   @Action(SetGameSettings)
   setGameSettings(context: StateContext<AppStateModel>, { settings }: SetGameSettings) {
-    context.patchState({ settings, showMenu: false });
+    context.patchState({ settings, menuOpened: false });
   }
 
   @Action(InitGame)

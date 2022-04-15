@@ -14,17 +14,19 @@ import { environment } from 'src/environments/environment';
 import { AppComponent } from './app.component';
 import { AppState } from './app.state';
 import { CloudsComponent } from './clouds/clouds.component';
-import { GameSetupComponent } from './game-setup/game-setup.component';
 import { GameComponent } from './game/game.component';
 import { HeaderComponent } from './header/header.component';
+import { MenuComponent } from './menu/menu.component';
+import { ToolbarComponent } from './toolbar/toolbar.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    GameSetupComponent,
+    MenuComponent,
     HeaderComponent,
     CloudsComponent,
-    GameComponent
+    GameComponent,
+    ToolbarComponent
   ],
   imports: [
     BrowserModule,

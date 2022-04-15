@@ -1,17 +1,15 @@
-<div class="content" role="main">
+<app-header></app-header>
 
-  <app-header></app-header>
-
-  <div class="app-container">
-    <ng-container *ngIf="showMenu$ | async; else game">
-      <app-game-setup></app-game-setup>
-    </ng-container>
+<div class="content">
+  <div class="container">
+    <div *ngIf="menuOpened$ | async; else game" class="menu">
+      <app-menu></app-menu>
+    </div>
 
     <ng-template #game>
       <app-game></app-game>
     </ng-template>
   </div>
-
-  <app-clouds></app-clouds>
-
 </div>
+
+<app-clouds></app-clouds>

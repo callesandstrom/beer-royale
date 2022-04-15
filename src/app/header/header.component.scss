@@ -1,15 +1,16 @@
 :host {
   display: flex;
+  justify-content: center;
   align-items: center;
+  padding: 24px 0;
 }
 
-.beer-image {
-  width: 72px;
+.logo {
+  height: 82px;
 }
 
-.beer-heading {
-  margin-bottom: 0;
-  margin-left: 24px;
+.heading {
+  margin: 0 0 0 24px;
   font-size: 32px;
   font-weight: 500;
 }

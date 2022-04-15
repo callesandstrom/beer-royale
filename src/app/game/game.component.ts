@@ -1,13 +1,15 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, ofActionDispatched, Select, Store } from '@ngxs/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
-import { AppState, FinishGame, GameState, InitGame, PauseGame, Player, RestartGame, ResumeGame, Round, StartGame } from '../app.state';
+import { AppState, FinishGame, InitGame, PauseGame, RestartGame, ResumeGame, StartGame } from '../app.state';
+import { GameState, Player, Round } from '../models';
 
 @Component({
   selector: 'app-game',
   templateUrl: './game.component.html',
-  styleUrls: ['./game.component.scss']
+  styleUrls: ['./game.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GameComponent implements OnInit, OnDestroy {
 
@@ -25,22 +27,6 @@ export class GameComponent implements OnInit, OnDestroy {
     this.actions$
       .pipe(ofActionDispatched(FinishGame), takeUntil(this.unsubscribe))
       .subscribe(() => this.onFinish());
-  }
-
-  start(): void {
-    this.store.dispatch(new StartGame());
-  }
-
-  restart() {
-    this.store.dispatch(new RestartGame());
-  }
-
-  pause(): void {
-    this.store.dispatch(new PauseGame());
-  }
-
-  resume(): void {
-    this.store.dispatch(new ResumeGame());
   }
 
   ngOnDestroy(): void {
