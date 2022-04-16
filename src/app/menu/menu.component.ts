@@ -13,7 +13,7 @@ export class MenuComponent {
 
   emojies = ['🐢', '🐲', '🦄', '🐼', '🐷', '🐦', '🐬', '🐘', '🐒', '🐇', '🐧', '🐫', '🐠', '🐞', '🐝', '🐳', '🐶', '🐌', '🐻', '🦍'];
 
-  intervalSec = new FormControl(5, Validators.required);
+  intervalSec = new FormControl(5);
 
   players = new FormArray([
     new FormControl('Calle', Validators.required),

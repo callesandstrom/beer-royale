@@ -9,6 +9,10 @@ export interface Player {
   diedAtRound: number | null;
 }
 
+export interface LeaderboardItem extends Player {
+  position: number;
+}
+
 export interface Round {
   number: number;
   attacks: Attack[];

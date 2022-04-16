@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext } from '@ngxs/store';
 import { filter, interval, map, startWith, takeWhile } from 'rxjs';
-import { Attack, GameSettings, GameState, Player, Round } from './models';
+import { Attack, GameSettings, GameState, LeaderboardItem, Player, Round } from './models';
+import { groupBy } from './utilities';
 
 const weapons = ['Eldboll', 'Kokosnöt', 'Regnbågsvätska', 'Fiskben', 'Rent gift', 'Majskolv', 'Häxvrål', 'Batong', 'Späckhuggare', 'Pulver', 'Ett mapp', 'Örfil', 'Trollstav', 'Mossa', 'Smör', 'Sin röst'];
 
@@ -83,7 +84,9 @@ export class AppState {
 
   @Selector()
   static leaderboard(state: AppStateModel) {
-    return [...state.players].sort((a, b) => b.hp - a.hp || (b.diedAtRound ?? 0) - (a.diedAtRound ?? 0));
+    const sortedPlayers = [...state.players].sort((a, b) => b.hp - a.hp || (b.diedAtRound ?? 0) - (a.diedAtRound ?? 0));
+    const groups = groupBy(sortedPlayers, x => `${x.hp}-${x.diedAtRound ?? 0}`);
+    return Object.keys(groups).reduce<LeaderboardItem[]>((acc, cur) => [...acc, ...groups[cur].map(x => ({ ...x, position: acc.length + 1 }))], []);
   }
 
   @Selector()

@@ -3,7 +3,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Actions, ofActionDispatched, Select, Store } from '@ngxs/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { AppState, FinishGame, InitGame, PauseGame, RestartGame, ResumeGame, StartGame } from '../app.state';
-import { GameState, Player, Round } from '../models';
+import { GameState, LeaderboardItem, Player, Round } from '../models';
 
 @Component({
   selector: 'app-game',
@@ -16,7 +16,7 @@ export class GameComponent implements OnInit, OnDestroy {
   private unsubscribe: Subject<void> = new Subject();
 
   @Select(AppState.gameState) gameState$: Observable<GameState>;
-  @Select(AppState.leaderboard) leaderboard$: Observable<Player[]>;
+  @Select(AppState.leaderboard) leaderboard$: Observable<LeaderboardItem[]>;
   @Select(AppState.rounds) rounds$: Observable<Round[]>;
 
   constructor(private store: Store, private actions$: Actions, private snackbar: MatSnackBar) { }
@@ -39,16 +39,10 @@ export class GameComponent implements OnInit, OnDestroy {
   }
 
   private getWinnerMessage(): string {
-    const leaderboard = this.store.selectSnapshot(AppState.leaderboard);
-    const alivePlayer = leaderboard.find(x => x.hp > 0);
+    const winners = this.store.selectSnapshot(AppState.leaderboard).filter(x => x.position === 1);
 
-    if (alivePlayer) {
-      return `Graaattiss ${alivePlayer.name} May you drink in peace 🥳🍻🎈`;
-    }
-
-    const rounds = this.store.selectSnapshot(AppState.rounds);
-    const tiedPlayers = leaderboard.filter(x => x.diedAtRound === rounds[0].number);
-
-    return `Ingen vinnare! 😬 Deathmatch mellan ${tiedPlayers.map(x => x.name).join(' och ')}`;
+    return winners.length === 1
+      ? `Grattis ${winners[0].name}🥇 May you drink in peace 🍺`
+      : `Flera vinnare! 🤯 Deathmatch mellan ${winners.map(x => x.name).join(' och ')}`;
   }
 }
