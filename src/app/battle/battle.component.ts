@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/
 import { MatSnackBar, MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
 import { Actions, ofActionDispatched, Select, Store } from '@ngxs/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
-import { AppState, FinishGame, InitGame, PauseGame, RestartGame, ResumeGame, StartGame } from '../app.state';
-import { GameState, LeaderboardItem, Player, Round } from '../models';
+import { AppState, FinishGame, InitGame, StartGame } from '../app.state';
+import { GameState, LeaderboardItem, Round } from '../models';
 
 @Component({
   selector: 'app-battle',

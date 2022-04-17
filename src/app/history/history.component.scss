@@ -1,0 +1,13 @@
+.history {
+  display: flex;
+  height: 500px;
+
+  & mat-card {
+    flex: 1;
+    overflow: auto;
+  }
+}
+
+.player-name:not(:first-child) {
+  margin-left: 8px;
+}

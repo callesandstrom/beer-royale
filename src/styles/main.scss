@@ -18,3 +18,10 @@ body {
     line-height: 1.2;
   }
 }
+
+app-history .mat-list-item-disabled {
+  background-color: transparent !important;
+  color: rgba(0, 0, 0, 0.87) !important;
+  pointer-events: initial !important;
+  cursor: default !important;
+}

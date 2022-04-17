@@ -33,3 +33,9 @@ export interface GameState {
   paused: boolean;
   finished: boolean;
 }
+
+export interface HistoryItem {
+  date: number;
+  leaderboard: LeaderboardItem[];
+  isSaved: boolean;
+}

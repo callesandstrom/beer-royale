@@ -1,0 +1,32 @@
+<div class="mb-2">
+  <button mat-raised-button color="primary" (click)="copyAsJson()">Kopiera allt som JSON</button>
+  <button mat-raised-button color="warn" class="ml-2" [disabled]="list.selectedOptions.selected.length === 0"
+    (click)="removeItems(list)">
+    Ta bort markerade rader
+  </button>
+  <a mat-button class="ml-1" routerLink="/menu">Tillbaka till meny</a>
+</div>
+
+<div class="history">
+  <mat-card class="mat-elevation-z8">
+    <mat-card-subtitle>Historik</mat-card-subtitle>
+
+    <mat-selection-list #list>
+      <mat-list-option *ngFor="let item of history$ | async" [value]="item" [disabled]="item.isSaved">
+        <div mat-line>
+          {{ item.date | date:'short' }}
+          <span *ngIf="!item.isSaved" title="Den här raden finns bara i cachen">🔄</span>
+          <span *ngIf="item.isSaved" title="Den här raden är sparad i JSON">✅</span>
+        </div>
+
+        <div mat-line class="mt-1">
+          <span *ngFor="let player of item.leaderboard" class="player-name"
+            [title]="player.diedAtRound ? 'Dog runda ' + player.diedAtRound + ' 💀' : 'Vinnare 🥇'">
+            {{ player.position }}. {{ player.name }}
+          </span>
+        </div>
+        <mat-divider></mat-divider>
+      </mat-list-option>
+    </mat-selection-list>
+  </mat-card>
+</div>

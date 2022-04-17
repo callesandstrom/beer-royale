@@ -1,33 +1,39 @@
-<mat-card class="mat-elevation-z8">
-  <mat-card-subtitle>Meny</mat-card-subtitle>
+<div>
+  <mat-card class="mat-elevation-z8">
+    <mat-card-subtitle>Meny</mat-card-subtitle>
 
-  <div class="players-container">
-    <ng-container *ngFor="let control of players.controls; index as i">
-      <div class="form-field-container">
-        <mat-form-field appearance="fill">
-          <mat-label>Spelare {{ i + 1 }}</mat-label>
-          <input matInput placeholder="Ex. Mind Flayer" [formControl]="players.controls[i]">
-        </mat-form-field>
+    <div class="players-container">
+      <ng-container *ngFor="let player of players.controls; index as i">
+        <div class="form-field-container" [formGroup]="player">
+          <mat-form-field appearance="fill">
+            <mat-label>Spelare {{ i + 1 }}</mat-label>
+            <input matInput appAutofocus placeholder="Ex. Mind Flayer" formControlName="name"
+              (keydown.enter)="addPlayer()">
+            <span matSuffix class="emoji" (click)="shuffleEmoji($event, player)">{{ player.value.emoji }}</span>
+          </mat-form-field>
 
-        <button mat-icon-button class="mt-1 ml-1" [disabled]="i === 0" (click)="removePlayer(i)">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </div>
-    </ng-container>
-  </div>
-
-  <div class="button-container">
-    <div>
-      <button mat-raised-button (click)="addPlayer()">Lägg till spelare</button>
-      <button mat-raised-button color="primary" class="ml-2" [disabled]="players.invalid" (click)="submit()">
-        Till spleplan
-      </button>
+          <button mat-icon-button class="mt-1 ml-1" [disabled]="i === 0" (click)="removePlayer(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </div>
+      </ng-container>
     </div>
 
-    <mat-form-field class="ml-2">
-      <mat-label>Intervall (Sekunder)</mat-label>
-      <input matInput type="number" [formControl]="intervalSec">
-    </mat-form-field>
-  </div>
+    <div class="button-container">
+      <div>
+        <button mat-raised-button (click)="addPlayer()">Lägg till spelare</button>
+        <button mat-raised-button color="primary" class="ml-2" [disabled]="players.invalid" (click)="submit()">
+          Till spleplan
+        </button>
+      </div>
 
-</mat-card>
+      <mat-form-field class="ml-2">
+        <mat-label>Intervall (Sekunder)</mat-label>
+        <input matInput type="number" [formControl]="intervalSec">
+      </mat-form-field>
+    </div>
+
+  </mat-card>
+
+  <a mat-button class="mt-2" routerLink="/history">Visa historik</a>
+</div>

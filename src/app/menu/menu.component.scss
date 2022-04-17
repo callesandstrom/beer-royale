@@ -9,7 +9,7 @@ mat-card {
 }
 
 .players-container {
-  max-height: 420px;
+  max-height: 450px;
   margin-bottom: 24px;
   padding-right: 8px;
   overflow: auto;
@@ -22,6 +22,12 @@ mat-card {
 .form-field-container {
   display: flex;
   align-items: flex-start;
+}
+
+.emoji {
+  font-size: 20px;
+  user-select: none;
+  cursor: pointer;
 }
 
 .button-container {

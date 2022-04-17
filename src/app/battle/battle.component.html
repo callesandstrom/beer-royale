@@ -11,7 +11,7 @@
         <div class="leaderboard">
           <ng-container *ngFor="let player of leaderboard$ | async; let i = index">
             <div>{{ player.position }} {{ player.name }}</div>
-            <div [title]="player.hp === 0 ? 'Dog runda ' + player.diedAtRound + ' 💀' : ''">
+            <div [title]="player.diedAtRound ? 'Dog runda ' + player.diedAtRound + ' 💀' : ''">
               HP: <strong>{{ player.hp }}</strong>
               <ng-container *ngIf="gameState.finished">
                 <span *ngIf="player.position === 1"> 🥇</span>

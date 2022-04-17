@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
 import { filter, interval, map, startWith, takeWhile } from 'rxjs';
-import { Attack, GameSettings, GameState, LeaderboardItem, Player, Round } from './models';
-import { groupBy } from './utilities';
-
-const weapons = ['Eldboll', 'Kokosnöt', 'Regnbågsvätska', 'Fiskben', 'Rent gift', 'Majskolv', 'Häxvrål', 'Batong', 'Späckhuggare', 'Pulver', 'Ett mapp', 'Örfil', 'Trollstav', 'Mossa', 'Smör', 'Sin röst'];
+import { calculateRound, getLeaderboard } from './battle/battle.utility';
+import { AddHistory } from './history/history.state';
+import { GameSettings, GameState, HistoryItem, LeaderboardItem, Player, Round } from './models';
 
 export class SetGameSettings {
   static readonly type = '[App] Set Game Settings';
@@ -80,9 +79,7 @@ export class AppState implements NgxsOnInit {
 
   @Selector()
   static leaderboard(state: AppStateModel): LeaderboardItem[] {
-    const sortedPlayers = [...state.players].sort((a, b) => b.hp - a.hp || (b.diedAtRound ?? 0) - (a.diedAtRound ?? 0));
-    const groups = groupBy(sortedPlayers, x => `${x.hp}-${x.diedAtRound ?? 0}`);
-    return Object.keys(groups).reduce<LeaderboardItem[]>((acc, cur) => [...acc, ...groups[cur].map(x => ({ ...x, position: acc.length + 1 }))], []);
+    return getLeaderboard(state.players);
   }
 
   @Selector()
@@ -92,10 +89,9 @@ export class AppState implements NgxsOnInit {
 
   ngxsOnInit(context: StateContext<AppStateModel>) {
     const cachedSettings = localStorage.getItem('settings');
+    const settings = cachedSettings ? JSON.parse(cachedSettings) : undefined;
 
-    if (cachedSettings) {
-      context.patchState({ settings: JSON.parse(cachedSettings) });
-    }
+    context.patchState({ settings });
   }
 
   @Action(SetGameSettings)
@@ -107,12 +103,9 @@ export class AppState implements NgxsOnInit {
   @Action(InitGame)
   init(context: StateContext<AppStateModel>) {
     const { settings } = context.getState();
+    const players = settings!.players.map<Player>(player => ({ name: `${player.name} ${player.emoji}`, hp: 100, diedAtRound: null }));
 
-    context.patchState({
-      ...initialState,
-      settings,
-      players: settings!.players.map<Player>(player => ({ name: `${player.name} ${player.emoji}`, hp: 100, diedAtRound: null })),
-    });
+    context.setState({ ...initialState, settings, players });
   }
 
   @Action(StartGame)
@@ -147,6 +140,15 @@ export class AppState implements NgxsOnInit {
   @Action(FinishGame)
   finishGame(context: StateContext<AppStateModel>) {
     context.patchState({ finished: true });
+
+    const { players } = context.getState();
+    const historyItem: HistoryItem = {
+      leaderboard: getLeaderboard(players),
+      date: Date.now(),
+      isSaved: false,
+    };
+
+    context.dispatch(new AddHistory(historyItem));
   }
 
   @Action(RestartGame)
@@ -158,39 +160,9 @@ export class AppState implements NgxsOnInit {
 
   @Action(CalculateRound)
   calculateRound(context: StateContext<AppStateModel>) {
-    const { rounds, players } = context.getState();
-    const roundNumber = rounds.length + 1;
-    const attacks: Attack[] = [];
+    const state = context.getState();
+    const { rounds, players } = calculateRound(state.rounds, state.players);
 
-    let updatedPlayers = [...players];
-
-    players.filter(x => x.hp > 0).forEach(player => {
-      const enemies = updatedPlayers.filter(x => x.hp > 0).filter(x => x.name !== player.name);
-      const enemy = enemies[Math.floor(Math.random() * enemies.length)];
-
-      if (!enemy) {
-        attacks.push({ playerName: player.name, enemyName: '', newEnemyHp: 0, weapon: '', damage: 0, isCriticalHit: false, isDeathblow: false });
-        return;
-      }
-
-      const weapon = weapons[Math.floor(Math.random() * weapons.length)];
-      const damage = Math.floor(Math.random() * 10) + 1;
-      const isCriticalHit = Math.random() * 100 > 95;
-      const finalDamage = isCriticalHit ? damage * 3 : damage;
-      const newEnemyHp = Math.max(0, enemy.hp - finalDamage);
-      const isDeathblow = newEnemyHp === 0;
-
-      updatedPlayers = [
-        ...updatedPlayers.filter(x => x.name !== enemy.name),
-        { ...enemy, ...{ hp: newEnemyHp, diedAtRound: isDeathblow ? roundNumber : null } }
-      ];
-
-      attacks.push({ playerName: player.name, enemyName: enemy.name, newEnemyHp, weapon, damage: finalDamage, isCriticalHit, isDeathblow });
-    });
-
-    context.patchState({
-      rounds: [...rounds, { number: roundNumber, attacks }],
-      players: updatedPlayers
-    });
+    context.patchState({ rounds, players });
   }
 }
