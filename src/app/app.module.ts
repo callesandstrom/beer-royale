@@ -8,13 +8,15 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { RouterModule } from '@angular/router';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsModule } from '@ngxs/store';
 import { environment } from 'src/environments/environment';
 import { AppComponent } from './app.component';
 import { AppState } from './app.state';
 import { CloudsComponent } from './clouds/clouds.component';
-import { GameComponent } from './game/game.component';
+import { BattleComponent } from './battle/battle.component';
+import { BattleGuard } from './battle/battle.guard';
 import { HeaderComponent } from './header/header.component';
 import { MenuComponent } from './menu/menu.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
@@ -25,7 +27,7 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     MenuComponent,
     HeaderComponent,
     CloudsComponent,
-    GameComponent,
+    BattleComponent,
     ToolbarComponent
   ],
   imports: [
@@ -40,6 +42,12 @@ import { ToolbarComponent } from './toolbar/toolbar.component';
     ReactiveFormsModule,
     NgxsModule.forRoot([AppState], { developmentMode: !environment.production }),
     NgxsReduxDevtoolsPluginModule.forRoot({ disabled: environment.production }),
+    RouterModule.forRoot([
+      { path: '', redirectTo: 'menu', pathMatch: 'full' },
+      { path: 'menu', component: MenuComponent },
+      { path: 'battle', canActivate: [BattleGuard], canDeactivate: [BattleGuard], component: BattleComponent },
+      { path: '**', redirectTo: '' },
+    ])
   ],
   providers: [],
   bootstrap: [AppComponent]

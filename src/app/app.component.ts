@@ -1,7 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Select } from '@ngxs/store';
-import { Observable } from 'rxjs';
-import { AppState } from './app.state';
 
 @Component({
   selector: 'app-root',
@@ -10,6 +7,4 @@ import { AppState } from './app.state';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 
-export class AppComponent {
-  @Select(AppState.menuOpened) menuOpened$: Observable<boolean>;
-}
+export class AppComponent { }

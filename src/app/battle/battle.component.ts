@@ -1,19 +1,20 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarRef, TextOnlySnackBar } from '@angular/material/snack-bar';
 import { Actions, ofActionDispatched, Select, Store } from '@ngxs/store';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { AppState, FinishGame, InitGame, PauseGame, RestartGame, ResumeGame, StartGame } from '../app.state';
 import { GameState, LeaderboardItem, Player, Round } from '../models';
 
 @Component({
-  selector: 'app-game',
-  templateUrl: './game.component.html',
-  styleUrls: ['./game.component.scss'],
+  selector: 'app-battle',
+  templateUrl: './battle.component.html',
+  styleUrls: ['./battle.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GameComponent implements OnInit, OnDestroy {
+export class BattleComponent implements OnInit, OnDestroy {
 
   private unsubscribe: Subject<void> = new Subject();
+  private snackbarRef?: MatSnackBarRef<TextOnlySnackBar>;
 
   @Select(AppState.gameState) gameState$: Observable<GameState>;
   @Select(AppState.leaderboard) leaderboard$: Observable<LeaderboardItem[]>;
@@ -25,6 +26,10 @@ export class GameComponent implements OnInit, OnDestroy {
     this.store.dispatch(new InitGame());
 
     this.actions$
+      .pipe(ofActionDispatched(StartGame), takeUntil(this.unsubscribe))
+      .subscribe(() => this.snackbarRef?.dismiss());
+
+    this.actions$
       .pipe(ofActionDispatched(FinishGame), takeUntil(this.unsubscribe))
       .subscribe(() => this.onFinish());
   }
@@ -32,10 +37,11 @@ export class GameComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribe.next();
     this.unsubscribe.complete();
+    this.snackbarRef?.dismiss();
   }
 
   private onFinish(): void {
-    this.snackbar.open(this.getWinnerMessage());
+    this.snackbarRef = this.snackbar.open(this.getWinnerMessage());
   }
 
   private getWinnerMessage(): string {

@@ -1,5 +1,5 @@
 export interface GameSettings {
-  playerNames: string[];
+  players: { name: string; emoji: string; }[];
   intervalMs: number;
 }
 
@@ -29,7 +29,6 @@ export interface Attack {
 }
 
 export interface GameState {
-  menuOpened: boolean;
   started: boolean;
   paused: boolean;
   finished: boolean;

@@ -1,7 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { FormArray, FormControl, Validators } from '@angular/forms';
+import { Router } from '@angular/router';
 import { Store } from '@ngxs/store';
-import { SetGameSettings } from '../app.state';
+import { AppState, SetGameSettings } from '../app.state';
+import { GameSettings } from '../models';
 
 @Component({
   selector: 'app-menu',
@@ -9,25 +11,24 @@ import { SetGameSettings } from '../app.state';
   styleUrls: ['./menu.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class MenuComponent {
+export class MenuComponent implements OnInit {
 
   emojies = ['🐢', '🐲', '🦄', '🐼', '🐷', '🐦', '🐬', '🐘', '🐒', '🐇', '🐧', '🐫', '🐠', '🐞', '🐝', '🐳', '🐶', '🐌', '🐻', '🦍'];
 
+  settings?: GameSettings;
+  players = new FormArray([new FormControl(null, Validators.required)]);
   intervalSec = new FormControl(5);
 
-  players = new FormArray([
-    new FormControl('Calle', Validators.required),
-    new FormControl('Maria', Validators.required),
-    new FormControl('Marcus', Validators.required),
-    new FormControl('Niclas', Validators.required),
-    new FormControl('Jesper', Validators.required),
-    new FormControl('Young', Validators.required),
-    new FormControl('Elin', Validators.required),
-    new FormControl('Jocke', Validators.required),
-    new FormControl('Oscar', Validators.required),
-  ]);
+  constructor(private store: Store, private router: Router) { }
 
-  constructor(private store: Store) { }
+  ngOnInit(): void {
+    this.settings = this.store.selectSnapshot(AppState.settings);
+
+    if (this.settings) {
+      this.players = new FormArray(this.settings.players.map(x => new FormControl(x.name, Validators.required)));
+      this.intervalSec = new FormControl(this.settings.intervalMs / 1000);
+    }
+  }
 
   addPlayer(): void {
     this.players.push(new FormControl(null, Validators.required));
@@ -38,21 +39,17 @@ export class MenuComponent {
   }
 
   submit(): void {
-    this.store.dispatch(new SetGameSettings({
-      playerNames: this.players.value.map((name: string) => name + ' ' + this.getEmoji(name)),
+    const settings: GameSettings = {
+      players: this.players.value.map((name: string) => ({
+        name,
+        emoji: this.settings?.players.find(x => x.name === name)?.emoji ?? this.getRandomEmoji()
+      })),
       intervalMs: this.intervalSec.value * 1000
-    }));
-  }
+    };
 
-  private getEmoji(name: string): string {
-    switch (name) {
-      case 'Calle':
-        return '🦁';
-      case 'Maria':
-        return '🐥';
-      default:
-        return this.getRandomEmoji();
-    }
+    this.store
+      .dispatch(new SetGameSettings(settings))
+      .subscribe(() => this.router.navigateByUrl('/battle'));
   }
 
   private getRandomEmoji(): string {

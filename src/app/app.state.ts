@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Action, Selector, State, StateContext } from '@ngxs/store';
+import { Action, NgxsOnInit, Selector, State, StateContext } from '@ngxs/store';
 import { filter, interval, map, startWith, takeWhile } from 'rxjs';
 import { Attack, GameSettings, GameState, LeaderboardItem, Player, Round } from './models';
 import { groupBy } from './utilities';
@@ -40,42 +40,38 @@ export class CalculateRound {
 }
 
 export interface AppStateModel {
-  settings: GameSettings;
+  settings?: GameSettings;
   players: Player[];
   rounds: Round[];
-  menuOpened: boolean;
   started: boolean;
   paused: boolean;
   finished: boolean;
 }
 
+const initialState: AppStateModel = {
+  settings: undefined,
+  players: [],
+  rounds: [],
+  started: false,
+  paused: false,
+  finished: false,
+};
+
 @Injectable()
 @State<AppStateModel>({
   name: 'app',
-  defaults: {
-    settings: {
-      intervalMs: 5000,
-      playerNames: []
-    },
-    players: [],
-    rounds: [],
-    menuOpened: true,
-    started: false,
-    paused: false,
-    finished: false,
-  },
+  defaults: initialState
 })
-export class AppState {
+export class AppState implements NgxsOnInit {
 
   @Selector()
-  static menuOpened(state: AppStateModel) {
-    return state.menuOpened;
+  static settings(state: AppStateModel): GameSettings | undefined {
+    return state.settings;
   }
 
   @Selector()
   static gameState(state: AppStateModel): GameState {
     return {
-      menuOpened: state.menuOpened,
       started: state.started,
       paused: state.paused,
       finished: state.finished,
@@ -83,33 +79,47 @@ export class AppState {
   }
 
   @Selector()
-  static leaderboard(state: AppStateModel) {
+  static leaderboard(state: AppStateModel): LeaderboardItem[] {
     const sortedPlayers = [...state.players].sort((a, b) => b.hp - a.hp || (b.diedAtRound ?? 0) - (a.diedAtRound ?? 0));
     const groups = groupBy(sortedPlayers, x => `${x.hp}-${x.diedAtRound ?? 0}`);
     return Object.keys(groups).reduce<LeaderboardItem[]>((acc, cur) => [...acc, ...groups[cur].map(x => ({ ...x, position: acc.length + 1 }))], []);
   }
 
   @Selector()
-  static rounds(state: AppStateModel) {
+  static rounds(state: AppStateModel): Round[] {
     return [...state.rounds].reverse();
+  }
+
+  ngxsOnInit(context: StateContext<AppStateModel>) {
+    const cachedSettings = localStorage.getItem('settings');
+
+    if (cachedSettings) {
+      context.patchState({ settings: JSON.parse(cachedSettings) });
+    }
   }
 
   @Action(SetGameSettings)
   setGameSettings(context: StateContext<AppStateModel>, { settings }: SetGameSettings) {
-    context.patchState({ settings, menuOpened: false });
+    localStorage.setItem('settings', JSON.stringify(settings));
+    context.patchState({ settings });
   }
 
   @Action(InitGame)
   init(context: StateContext<AppStateModel>) {
     const { settings } = context.getState();
-    context.patchState({ players: settings.playerNames.map<Player>(name => ({ name, hp: 100, diedAtRound: null })) });
+
+    context.patchState({
+      ...initialState,
+      settings,
+      players: settings!.players.map<Player>(player => ({ name: `${player.name} ${player.emoji}`, hp: 100, diedAtRound: null })),
+    });
   }
 
   @Action(StartGame)
   startGame(context: StateContext<AppStateModel>) {
     const { settings } = context.getState();
 
-    interval(settings.intervalMs)
+    interval(settings!.intervalMs)
       .pipe(
         startWith(0),
         map(() => context.getState()),
@@ -141,14 +151,9 @@ export class AppState {
 
   @Action(RestartGame)
   restartGame(context: StateContext<AppStateModel>) {
-    const { settings } = context.getState();
-
-    context.patchState({
-      finished: false,
-      players: settings.playerNames.map<Player>(name => ({ name, hp: 100, diedAtRound: null })),
-      rounds: []
-    });
-    context.dispatch(new StartGame());
+    context
+      .dispatch(new InitGame())
+      .subscribe(() => context.dispatch(new StartGame()));
   }
 
   @Action(CalculateRound)

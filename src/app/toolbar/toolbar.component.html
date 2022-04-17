@@ -1,19 +1,23 @@
-<ng-container *ngIf="gameState.started; else startButton">
+<ng-container *ngIf="gameState.started; else notStarted">
+
   <ng-container *ngIf="gameState.finished; else running">
     <button mat-raised-button color="primary" (click)="restart()">Starta om</button>
+    <button mat-button class="ml-1" routerLink="/menu">Tillbaka till meny</button>
   </ng-container>
 
   <ng-template #running>
-    <ng-container *ngIf="gameState.paused; else pauseButton">
+    <ng-container *ngIf="gameState.paused; else notPaused">
       <button mat-raised-button color="primary" (click)="resume()">Dansa</button>
     </ng-container>
 
-    <ng-template #pauseButton>
+    <ng-template #notPaused>
       <button mat-raised-button color="primary" (click)="pause()">Pausa</button>
     </ng-template>
   </ng-template>
+
 </ng-container>
 
-<ng-template #startButton>
+<ng-template #notStarted>
   <button mat-raised-button color="primary" (click)="start()">Starta</button>
+  <button mat-button class="ml-1" routerLink="/menu">Tillbaka till meny</button>
 </ng-template>
