@@ -1,0 +1,28 @@
+:host {
+  display: block;
+  width: 540px;
+  padding: 24px 24px 0 24px;
+  background-color: whitesmoke;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+}
+
+.players-container {
+  height: 520px;
+  margin-bottom: 24px;
+  overflow: auto;
+
+  & mat-form-field {
+    flex: 1;
+  }
+}
+
+.form-field-container {
+  display: flex;
+  align-items: flex-start;
+}
+
+.button-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}

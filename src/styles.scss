@@ -1,1 +1,50 @@
-/* You can add global styles to this file, and also import other style files */
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+.mat-snack-bar-container {
+  max-width: none !important;
+}
+
+@for $i from 0 through 4 {
+  $spacing: 8px * $i;
+
+  .m-#{$i} {
+    margin: $spacing !important;
+  }
+
+  .mt-#{$i} {
+    margin-top: $spacing !important;
+  }
+
+  .mr-#{$i} {
+    margin-right: $spacing !important;
+  }
+
+  .mb-#{$i} {
+    margin-bottom: $spacing !important;
+  }
+
+  .ml-#{$i} {
+    margin-left: $spacing !important;
+  }
+
+  .p-#{$i} {
+    padding: $spacing !important;
+  }
+
+  .pt-#{$i} {
+    padding-top: $spacing !important;
+  }
+
+  .pr-#{$i} {
+    padding-right: $spacing !important;
+  }
+
+  .pb-#{$i} {
+    padding-bottom: $spacing !important;
+  }
+
+  .pl-#{$i} {
+    padding-left: $spacing !important;
+  }
+}

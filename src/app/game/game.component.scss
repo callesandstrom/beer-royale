@@ -1,0 +1,51 @@
+:host {
+  flex: 1;
+  padding: 24px;
+  background-color: whitesmoke;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  font-weight: 500;
+}
+
+.game-container {
+  display: flex;
+  height: 520px;
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+mat-card {
+  flex: 1;
+  overflow: auto;
+}
+
+.player-container {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  margin-top: 24px;
+  font-size: 20px;
+}
+
+.player {
+  &__name {
+    font-size: 20px;
+  }
+}
+
+.round {
+  margin-bottom: 16px;
+
+  &__number {
+    margin-bottom: 8px;
+    font-size: 20px;
+  }
+}
+
+.attack-container {
+  display: flex;
+  justify-content: space-between;
+}
