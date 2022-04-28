@@ -2,28 +2,28 @@ import { Attack, LeaderboardItem, Player, Round } from '../models';
 import { groupBy } from '../utilities';
 
 const weapons = [
-  {name: 'Eldboll', emoji: '🔥'},
-  {name: 'Kokosnöt', emoji: '🥥'},
-  {name: 'Regnbågsvätska', emoji: '🌈'},
-  {name: 'Fisk', emoji: '🐟'},
-  {name: 'Rent gift', emoji: '🧪'},
-  {name: 'Majskolv', emoji: '🌽'},
-  {name: 'Nät', emoji: '🕸'},
-  {name: 'Ägg', emoji: '🥚'},
-  {name: 'Tårtbit', emoji: '🍰'},
-  {name: 'Väckarklocka', emoji: '⏰'},
-  {name: 'Amerikansk fotboll', emoji: '🏈'},
-  {name: 'Vattenpistol', emoji: '🔫'},
-  {name: 'DNA', emoji: '🧬'},
-  {name: 'Kvast', emoji: '🧹'},
-  {name: 'Balans', emoji: '☯'},
-  {name: 'Sömn', emoji: '💤'},
-  {name: 'Munk', emoji: '🍩'},
-  {name: 'Våg', emoji: '🌊'},
-  {name: 'Diamant', emoji: '💎'},
-  {name: 'Ljud', emoji: '🔊'},
-  {name: 'Email', emoji: '📧'},
-  {name: 'Magnet', emoji: '🧲'},
+  { name: 'Eldboll', emoji: '🔥' },
+  { name: 'Kokosnöt', emoji: '🥥' },
+  { name: 'Regnbågsvätska', emoji: '🌈' },
+  { name: 'Fisk', emoji: '🐟' },
+  { name: 'Rent gift', emoji: '🧪' },
+  { name: 'Majskolv', emoji: '🌽' },
+  { name: 'Nät', emoji: '🕸' },
+  { name: 'Ägg', emoji: '🥚' },
+  { name: 'Tårtbit', emoji: '🍰' },
+  { name: 'Väckarklocka', emoji: '⏰' },
+  { name: 'Amerikansk fotboll', emoji: '🏈' },
+  { name: 'Vattenpistol', emoji: '🔫' },
+  { name: 'DNA', emoji: '🧬' },
+  { name: 'Kvast', emoji: '🧹' },
+  { name: 'Balans', emoji: '☯' },
+  { name: 'Sömn', emoji: '💤' },
+  { name: 'Munk', emoji: '🍩' },
+  { name: 'Våg', emoji: '🌊' },
+  { name: 'Diamant', emoji: '💎' },
+  { name: 'Ljud', emoji: '🔊' },
+  { name: 'Email', emoji: '📧' },
+  { name: 'Magnet', emoji: '🧲' },
 ];
 
 export const getLeaderboard = (players: Player[]) => {
@@ -48,8 +48,8 @@ export const calculateRound = (rounds: Round[], players: Player[]): { rounds: Ro
       return;
     }
 
-    const rand = Math.floor(Math.random() * weapons.length)
-    const weapon = weapons[rand].name + ' ' + weapons[rand].emoji; 
+    const weaponIndex = Math.floor(Math.random() * weapons.length)
+    const weapon = weapons[weaponIndex].name + ' ' + weapons[weaponIndex].emoji; 
     const damage = Math.floor(Math.random() * 10) + 1;
     const isCriticalHit = Math.random() * 100 > 95;
     const finalDamage = isCriticalHit ? damage * 3 : damage;
